@@ -2,13 +2,16 @@ var fs = require('fs')
 var UnixMuxDemux = require('../index.js')
 var unixMuxDemux = new UnixMuxDemux()
 
-var server = unixMuxDemux.createServer()
-
-
 function cleanup(){
   console.log('Cleaning up socket', unixMuxDemux._pipe)
   if (fs.existsSync(unixMuxDemux._pipe)) fs.unlinkSync(unixMuxDemux._pipe)
 }
+
+var server = unixMuxDemux.createServer()
+
+server.on('close', function(){
+  cleanup()
+})
 
 // hit ctrl-c
 process.on('SIGINT', function () {
